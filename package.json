@@ -1,0 +1,11 @@
+{
+  "name": "multi-combo",
+  "private": true,
+  "packageManager": "pnpm@8.15.4",
+  "scripts": {
+    "dev": "turbo dev"
+  },
+  "devDependencies": {
+    "turbo": "^1.10.12"
+  }
+}
