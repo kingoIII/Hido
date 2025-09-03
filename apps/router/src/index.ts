@@ -1,8 +1,5 @@
-import express from "express";
-import fetch from "node-fetch";
+import express, { Request, Response } from "express";
 import Redis from "ioredis";
-import FormData from "form-data";
-import type { Request, Response } from "express";
 
 const r = new Redis(process.env.REDIS_URL!);
 const app = express();
@@ -21,14 +18,12 @@ app.post("/route", async (req: Request, res: Response) => {
 
   // send audio to audio-worker
   const audio = await fetch(chunkUrl);
-  const blob = await audio.arrayBuffer();
+  const buf = await audio.arrayBuffer();
   const form = new FormData();
-  form.append("file", Buffer.from(blob), {
-    filename: "a.wav"
-  });
+  form.append("file", new Blob([buf]), "a.wav");
   const resp = await fetch(process.env.AUDIO_WORKER_URL + "/infer", {
     method: "POST",
-    body: form as any
+    body: form
   });
   const { label, confidence, f0_mean, rms } = (await resp.json()) as WorkerResp;
 
