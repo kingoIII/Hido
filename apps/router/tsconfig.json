@@ -4,6 +4,7 @@
     "module": "ESNext",
     "moduleResolution": "Node",
     "esModuleInterop": true,
+    "lib": ["ES2020", "DOM"],
     "strict": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,

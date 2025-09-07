@@ -1,9 +1,10 @@
+import express, { Request, _ Response } from "express";
+import Redis from "ioredis";
 import express from "express";
 import fetch from "node-fetch";
 import Redis from "ioredis";
 import FormData from "form-data";
 import type { Request, Response } from "express";
-=======
 
 const r = new Redis(process.env.REDIS_URL!);
 const app = express();
@@ -17,12 +18,17 @@ interface WorkerResp {
   rms: number;
 }
 app.post("/route", async (req: Request, res: Response) => {
-=======
 app.post("/route", async (req, res) => {
   const { userHint, chunkUrl, sessionId } = req.body as Turn;
 
   // send audio to audio-worker
   const audio = await fetch(chunkUrl);
+  const buf = await audio.arrayBuffer();
+  const form = new FormData();
+  form.append("file", new Blob([buf]), "a.wav");
+  const resp = await fetch(process.env.AUDIO_WORKER_URL + "/infer", {
+    method: "POST",
+    body: form
   const blob = await audio.arrayBuffer();
   const form = new FormData();
   form.append("file", Buffer.from(blob), {
@@ -39,7 +45,6 @@ app.post("/route", async (req, res) => {
     `sess:${sessionId}:turns:${finalLabel}`,
     JSON.stringify({ ts: Date.now(), chunkUrl, f0_mean, rms })
   );
-=======
   const resp = await fetch(process.env.AUDIO_WORKER_URL + "/infer", { method: "POST", body: form as any });
   const { label, confidence, f0_mean, rms } = await resp.json();
 
